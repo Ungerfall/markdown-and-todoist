@@ -1,0 +1,36 @@
+@startuml
+
+package "input" {
+  file markdown [
+    markdown
+
+    <&text>
+  ]
+}
+
+package "parser" {
+  [Tokenizer]
+  [Parser]
+}
+
+package "model" {
+  [TodoistTask]
+}
+
+package "request-builder" {
+  [model-handler]
+  [restsharp] --> http
+}
+
+cloud {
+  [todoist-rest-api]
+}
+
+markdown -> [Tokenizer]
+[Tokenizer] --> [Parser]
+[Parser] -> [TodoistTask]
+[TodoistTask] --> [model-handler]
+[model-handler] -> [restsharp]
+http -> [todoist-rest-api]
+
+@enduml
