@@ -9,3 +9,9 @@
 ### reserved keywords
 1. remind - remainder with notification
 2. date - date of task; format yyyyMMdd hh:mm:ss
+
+### tokens
+1. project token
+2. description token
+3. date token
+4. remind token
