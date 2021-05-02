@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MarkdownToTodoist.Core\MarkdownToTodoist.Core.csproj" />
   </ItemGroup>
 
