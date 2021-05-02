@@ -1,4 +1,4 @@
-# markdown-to-todoist
+# markdown-and-todoist
 Tool for bulk todoist task creation using markdown description
 
 ### links
