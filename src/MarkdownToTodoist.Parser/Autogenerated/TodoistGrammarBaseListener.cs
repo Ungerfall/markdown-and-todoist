@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from ../../development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
+// Generated from F:/development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -36,17 +36,29 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class TodoistGrammarBaseListener : ITodoistGrammarListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.r"/>.
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.project"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterR([NotNull] TodoistGrammarParser.RContext context) { }
+	public virtual void EnterProject([NotNull] TodoistGrammarParser.ProjectContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.r"/>.
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.project"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitR([NotNull] TodoistGrammarParser.RContext context) { }
+	public virtual void ExitProject([NotNull] TodoistGrammarParser.ProjectContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDate([NotNull] TodoistGrammarParser.DateContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDate([NotNull] TodoistGrammarParser.DateContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

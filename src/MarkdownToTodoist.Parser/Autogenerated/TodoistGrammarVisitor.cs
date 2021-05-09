@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from ../../development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
+// Generated from F:/development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -32,9 +32,15 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface ITodoistGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.r"/>.
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.project"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitR([NotNull] TodoistGrammarParser.RContext context);
+	Result VisitProject([NotNull] TodoistGrammarParser.ProjectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDate([NotNull] TodoistGrammarParser.DateContext context);
 }

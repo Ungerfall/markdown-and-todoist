@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from ../../development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
+// Generated from F:/development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -35,7 +35,7 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class TodoistGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, ITodoistGrammarVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.r"/>.
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.project"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -43,8 +43,15 @@ public partial class TodoistGrammarBaseVisitor<Result> : AbstractParseTreeVisito
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitR([NotNull] TodoistGrammarParser.RContext context)
-    {
-        return VisitChildren(context);
-    }
+	public virtual Result VisitProject([NotNull] TodoistGrammarParser.ProjectContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitDate([NotNull] TodoistGrammarParser.DateContext context) { return VisitChildren(context); }
 }

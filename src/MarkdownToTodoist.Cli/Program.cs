@@ -1,6 +1,8 @@
 ﻿using Antlr4.Runtime;
-using MarkdownToTodoist.Parser;
+using Antlr4.Runtime.Tree;
+using MarkdownToTodoist.Core.Model;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace MarkdownToTodoist.Cli
@@ -9,7 +11,7 @@ namespace MarkdownToTodoist.Cli
     {
         static void Main(string[] args)
         {
-            String input = "hello Leonid";
+            String input = "%2020-01-22T21:03:33%";
             ICharStream stream = CharStreams.fromString(input);
             ITokenSource lexer = new TodoistGrammarLexer(stream);
             ITokenStream tokens = new CommonTokenStream(lexer);
@@ -17,9 +19,13 @@ namespace MarkdownToTodoist.Cli
             parser.RemoveErrorListeners();
             parser.AddErrorListener(new ErrorListener());
             parser.BuildParseTree = true;
-            var visitor = new TodoistGrammarVisitor();
-            var ctx = parser.r();
-            visitor.VisitR(ctx);
+            var visitor = new Visitor();
+            IParseTree tree = parser.project();
+            var project = visitor.Visit(tree);
+
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(project));
+
+            Console.ReadLine();
         }
     }
 
@@ -29,6 +35,24 @@ namespace MarkdownToTodoist.Cli
             string msg, RecognitionException e)
         {
             output.WriteLine(msg);
+        }
+    }
+
+    public class Visitor : TodoistGrammarBaseVisitor<TodoistProject>
+    {
+        private TodoistProject project;
+
+        public override TodoistProject VisitProject(TodoistGrammarParser.ProjectContext context)
+        {
+            project = new TodoistProject();
+            return base.VisitProject(context);
+        }
+
+        public override TodoistProject VisitDate(TodoistGrammarParser.DateContext context)
+        {
+            var datetimeString = context.GetText();
+            project.Date = DateTime.ParseExact(context.GetText(), "yyyy-MM-ddThh:mm:ss", CultureInfo.InvariantCulture);
+            return project;
         }
     }
 }

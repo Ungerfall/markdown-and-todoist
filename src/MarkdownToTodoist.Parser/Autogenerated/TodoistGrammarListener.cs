@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from ../../development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
+// Generated from F:/development/markdown-to-todoist/src/grammar/TodoistGrammar.g4 by ANTLR 4.9.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -31,13 +31,23 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface ITodoistGrammarListener : IParseTreeListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.r"/>.
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.project"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterR([NotNull] TodoistGrammarParser.RContext context);
+	void EnterProject([NotNull] TodoistGrammarParser.ProjectContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.r"/>.
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.project"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitR([NotNull] TodoistGrammarParser.RContext context);
+	void ExitProject([NotNull] TodoistGrammarParser.ProjectContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDate([NotNull] TodoistGrammarParser.DateContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDate([NotNull] TodoistGrammarParser.DateContext context);
 }
