@@ -36,20 +36,21 @@ public partial class TodoistGrammarParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		SHARP=1, PERCENT=2, DATETIMESEPARATOR=3, HYPHEN=4, COLON=5, INT4=6, INT2=7, 
-		NEWLINE=8;
+		SHARP=1, PERCENT=2, DATETIMESEPARATOR=3, HYPHEN=4, COLON=5, DIGIT=6, INT2=7, 
+		INT4=8, NEWLINE=9, PERIOD=10, SPACE=11, TEXT=12;
 	public const int
-		RULE_project = 0, RULE_date = 1;
+		RULE_project = 0, RULE_task = 1, RULE_subtask = 2, RULE_date = 3, RULE_inline = 4;
 	public static readonly string[] ruleNames = {
-		"project", "date"
+		"project", "task", "subtask", "date", "inline"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'#'", "'%'", "'T'", "'-'", "':'"
+		null, "'#'", "'%'", "'T'", "'-'", "':'", null, null, null, null, "'.'", 
+		"' '"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "SHARP", "PERCENT", "DATETIMESEPARATOR", "HYPHEN", "COLON", "INT4", 
-		"INT2", "NEWLINE"
+		null, "SHARP", "PERCENT", "DATETIMESEPARATOR", "HYPHEN", "COLON", "DIGIT", 
+		"INT2", "INT4", "NEWLINE", "PERIOD", "SPACE", "TEXT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -84,16 +85,30 @@ public partial class TodoistGrammarParser : Parser {
 	}
 
 	public partial class ProjectContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public DateContext[] date() {
-			return GetRuleContexts<DateContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SHARP() { return GetToken(TodoistGrammarParser.SHARP, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
+			return GetRuleContext<DateContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public DateContext date(int i) {
-			return GetRuleContext<DateContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(TodoistGrammarParser.NEWLINE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
+			return GetRuleContexts<InlineContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] NEWLINE() { return GetTokens(TodoistGrammarParser.NEWLINE); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE(int i) {
-			return GetToken(TodoistGrammarParser.NEWLINE, i);
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
+			return GetRuleContext<InlineContext>(i);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public TaskContext[] task() {
+			return GetRuleContexts<TaskContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TaskContext task(int i) {
+			return GetRuleContext<TaskContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public SubtaskContext[] subtask() {
+			return GetRuleContexts<SubtaskContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public SubtaskContext subtask(int i) {
+			return GetRuleContext<SubtaskContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Eof() { return GetToken(TodoistGrammarParser.Eof, 0); }
 		public ProjectContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -123,32 +138,299 @@ public partial class TodoistGrammarParser : Parser {
 		EnterRule(_localctx, 0, RULE_project);
 		int _la;
 		try {
+			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 8;
+			State = 10;
+			Match(SHARP);
+			State = 12;
+			ErrorHandler.Sync(this);
+			_alt = 1;
+			do {
+				switch (_alt) {
+				case 1:
+					{
+					{
+					State = 11;
+					inline();
+					}
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				State = 14;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,0,Context);
+			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
+			State = 16;
+			date();
+			State = 17;
+			Match(NEWLINE);
+			State = 22;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==DIGIT || _la==SPACE) {
+				{
+				State = 20;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case DIGIT:
+					{
+					State = 18;
+					task();
+					}
+					break;
+				case SPACE:
+					{
+					State = 19;
+					subtask();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				State = 24;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
+			State = 26;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
+			case 1:
+				{
+				State = 25;
+				Match(Eof);
+				}
+				break;
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class TaskContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(TodoistGrammarParser.PERIOD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
+			return GetRuleContext<DateContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] DIGIT() { return GetTokens(TodoistGrammarParser.DIGIT); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIGIT(int i) {
+			return GetToken(TodoistGrammarParser.DIGIT, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
+			return GetRuleContexts<InlineContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
+			return GetRuleContext<InlineContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(TodoistGrammarParser.NEWLINE, 0); }
+		public TaskContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_task; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.EnterTask(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.ExitTask(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ITodoistGrammarVisitor<TResult> typedVisitor = visitor as ITodoistGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTask(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public TaskContext task() {
+		TaskContext _localctx = new TaskContext(Context, State);
+		EnterRule(_localctx, 2, RULE_task);
+		int _la;
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 29;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 4;
-				date();
-				State = 6;
+				State = 28;
+				Match(DIGIT);
+				}
+				}
+				State = 31;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (_la==NEWLINE) {
+			} while ( _la==DIGIT );
+			State = 33;
+			Match(PERIOD);
+			State = 35;
+			ErrorHandler.Sync(this);
+			_alt = 1;
+			do {
+				switch (_alt) {
+				case 1:
 					{
-					State = 5;
-					Match(NEWLINE);
+					{
+					State = 34;
+					inline();
 					}
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
 				}
+				State = 37;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
+			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
+			State = 39;
+			date();
+			State = 41;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==NEWLINE) {
+				{
+				State = 40;
+				Match(NEWLINE);
+				}
+			}
 
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class SubtaskContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] SPACE() { return GetTokens(TodoistGrammarParser.SPACE); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE(int i) {
+			return GetToken(TodoistGrammarParser.SPACE, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(TodoistGrammarParser.PERIOD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
+			return GetRuleContext<DateContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] DIGIT() { return GetTokens(TodoistGrammarParser.DIGIT); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIGIT(int i) {
+			return GetToken(TodoistGrammarParser.DIGIT, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
+			return GetRuleContexts<InlineContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
+			return GetRuleContext<InlineContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(TodoistGrammarParser.NEWLINE, 0); }
+		public SubtaskContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_subtask; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.EnterSubtask(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.ExitSubtask(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ITodoistGrammarVisitor<TResult> typedVisitor = visitor as ITodoistGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSubtask(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public SubtaskContext subtask() {
+		SubtaskContext _localctx = new SubtaskContext(Context, State);
+		EnterRule(_localctx, 4, RULE_subtask);
+		int _la;
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 43;
+			Match(SPACE);
+			State = 44;
+			Match(SPACE);
+			State = 46;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			do {
+				{
+				{
+				State = 45;
+				Match(DIGIT);
 				}
 				}
-				State = 10;
+				State = 48;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( _la==PERCENT );
+			} while ( _la==DIGIT );
+			State = 50;
+			Match(PERIOD);
+			State = 52;
+			ErrorHandler.Sync(this);
+			_alt = 1;
+			do {
+				switch (_alt) {
+				case 1:
+					{
+					{
+					State = 51;
+					inline();
+					}
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				State = 54;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
+			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
+			State = 56;
+			date();
+			State = 58;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==NEWLINE) {
+				{
+				State = 57;
+				Match(NEWLINE);
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -207,36 +489,101 @@ public partial class TodoistGrammarParser : Parser {
 	[RuleVersion(0)]
 	public DateContext date() {
 		DateContext _localctx = new DateContext(Context, State);
-		EnterRule(_localctx, 2, RULE_date);
+		EnterRule(_localctx, 6, RULE_date);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 12;
+			State = 60;
 			Match(PERCENT);
-			State = 13;
+			State = 61;
 			Match(INT4);
-			State = 14;
+			State = 62;
 			Match(HYPHEN);
-			State = 15;
+			State = 63;
 			Match(INT2);
-			State = 16;
+			State = 64;
 			Match(HYPHEN);
-			State = 17;
+			State = 65;
 			Match(INT2);
-			State = 18;
+			State = 66;
 			Match(DATETIMESEPARATOR);
-			State = 19;
+			State = 67;
 			Match(INT2);
-			State = 20;
+			State = 68;
 			Match(COLON);
-			State = 21;
+			State = 69;
 			Match(INT2);
-			State = 22;
+			State = 70;
 			Match(COLON);
-			State = 23;
+			State = 71;
 			Match(INT2);
-			State = 24;
+			State = 72;
 			Match(PERCENT);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class InlineContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TEXT() { return GetToken(TodoistGrammarParser.TEXT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SHARP() { return GetToken(TodoistGrammarParser.SHARP, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERCENT() { return GetToken(TodoistGrammarParser.PERCENT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DATETIMESEPARATOR() { return GetToken(TodoistGrammarParser.DATETIMESEPARATOR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HYPHEN() { return GetToken(TodoistGrammarParser.HYPHEN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(TodoistGrammarParser.COLON, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIGIT() { return GetToken(TodoistGrammarParser.DIGIT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INT2() { return GetToken(TodoistGrammarParser.INT2, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INT4() { return GetToken(TodoistGrammarParser.INT4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(TodoistGrammarParser.PERIOD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE() { return GetToken(TodoistGrammarParser.SPACE, 0); }
+		public InlineContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_inline; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.EnterInline(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.ExitInline(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ITodoistGrammarVisitor<TResult> typedVisitor = visitor as ITodoistGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInline(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public InlineContext inline() {
+		InlineContext _localctx = new InlineContext(Context, State);
+		EnterRule(_localctx, 8, RULE_inline);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 74;
+			_la = TokenStream.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SHARP) | (1L << PERCENT) | (1L << DATETIMESEPARATOR) | (1L << HYPHEN) | (1L << COLON) | (1L << DIGIT) | (1L << INT2) | (1L << INT4) | (1L << PERIOD) | (1L << SPACE) | (1L << TEXT))) != 0)) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -252,28 +599,71 @@ public partial class TodoistGrammarParser : Parser {
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\n', '\x1D', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
-		'\t', '\x3', '\x3', '\x2', '\x3', '\x2', '\x5', '\x2', '\t', '\n', '\x2', 
-		'\x6', '\x2', '\v', '\n', '\x2', '\r', '\x2', '\xE', '\x2', '\f', '\x3', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x2', 
-		'\x2', '\x4', '\x2', '\x4', '\x2', '\x2', '\x2', '\x1C', '\x2', '\n', 
-		'\x3', '\x2', '\x2', '\x2', '\x4', '\xE', '\x3', '\x2', '\x2', '\x2', 
-		'\x6', '\b', '\x5', '\x4', '\x3', '\x2', '\a', '\t', '\a', '\n', '\x2', 
-		'\x2', '\b', '\a', '\x3', '\x2', '\x2', '\x2', '\b', '\t', '\x3', '\x2', 
-		'\x2', '\x2', '\t', '\v', '\x3', '\x2', '\x2', '\x2', '\n', '\x6', '\x3', 
-		'\x2', '\x2', '\x2', '\v', '\f', '\x3', '\x2', '\x2', '\x2', '\f', '\n', 
-		'\x3', '\x2', '\x2', '\x2', '\f', '\r', '\x3', '\x2', '\x2', '\x2', '\r', 
-		'\x3', '\x3', '\x2', '\x2', '\x2', '\xE', '\xF', '\a', '\x4', '\x2', '\x2', 
-		'\xF', '\x10', '\a', '\b', '\x2', '\x2', '\x10', '\x11', '\a', '\x6', 
-		'\x2', '\x2', '\x11', '\x12', '\a', '\t', '\x2', '\x2', '\x12', '\x13', 
-		'\a', '\x6', '\x2', '\x2', '\x13', '\x14', '\a', '\t', '\x2', '\x2', '\x14', 
-		'\x15', '\a', '\x5', '\x2', '\x2', '\x15', '\x16', '\a', '\t', '\x2', 
-		'\x2', '\x16', '\x17', '\a', '\a', '\x2', '\x2', '\x17', '\x18', '\a', 
-		'\t', '\x2', '\x2', '\x18', '\x19', '\a', '\a', '\x2', '\x2', '\x19', 
-		'\x1A', '\a', '\t', '\x2', '\x2', '\x1A', '\x1B', '\a', '\x4', '\x2', 
-		'\x2', '\x1B', '\x5', '\x3', '\x2', '\x2', '\x2', '\x4', '\b', '\f',
+		'\x5964', '\x3', '\xE', 'O', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', 
+		'\x6', '\t', '\x6', '\x3', '\x2', '\x3', '\x2', '\x6', '\x2', '\xF', '\n', 
+		'\x2', '\r', '\x2', '\xE', '\x2', '\x10', '\x3', '\x2', '\x3', '\x2', 
+		'\x3', '\x2', '\x3', '\x2', '\a', '\x2', '\x17', '\n', '\x2', '\f', '\x2', 
+		'\xE', '\x2', '\x1A', '\v', '\x2', '\x3', '\x2', '\x5', '\x2', '\x1D', 
+		'\n', '\x2', '\x3', '\x3', '\x6', '\x3', ' ', '\n', '\x3', '\r', '\x3', 
+		'\xE', '\x3', '!', '\x3', '\x3', '\x3', '\x3', '\x6', '\x3', '&', '\n', 
+		'\x3', '\r', '\x3', '\xE', '\x3', '\'', '\x3', '\x3', '\x3', '\x3', '\x5', 
+		'\x3', ',', '\n', '\x3', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\x6', 
+		'\x4', '\x31', '\n', '\x4', '\r', '\x4', '\xE', '\x4', '\x32', '\x3', 
+		'\x4', '\x3', '\x4', '\x6', '\x4', '\x37', '\n', '\x4', '\r', '\x4', '\xE', 
+		'\x4', '\x38', '\x3', '\x4', '\x3', '\x4', '\x5', '\x4', '=', '\n', '\x4', 
+		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', 
+		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', 
+		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x6', 
+		'\x3', '\x6', '\x3', '\x6', '\x2', '\x2', '\a', '\x2', '\x4', '\x6', '\b', 
+		'\n', '\x2', '\x3', '\x4', '\x2', '\x3', '\n', '\f', '\xE', '\x2', 'S', 
+		'\x2', '\f', '\x3', '\x2', '\x2', '\x2', '\x4', '\x1F', '\x3', '\x2', 
+		'\x2', '\x2', '\x6', '-', '\x3', '\x2', '\x2', '\x2', '\b', '>', '\x3', 
+		'\x2', '\x2', '\x2', '\n', 'L', '\x3', '\x2', '\x2', '\x2', '\f', '\xE', 
+		'\a', '\x3', '\x2', '\x2', '\r', '\xF', '\x5', '\n', '\x6', '\x2', '\xE', 
+		'\r', '\x3', '\x2', '\x2', '\x2', '\xF', '\x10', '\x3', '\x2', '\x2', 
+		'\x2', '\x10', '\xE', '\x3', '\x2', '\x2', '\x2', '\x10', '\x11', '\x3', 
+		'\x2', '\x2', '\x2', '\x11', '\x12', '\x3', '\x2', '\x2', '\x2', '\x12', 
+		'\x13', '\x5', '\b', '\x5', '\x2', '\x13', '\x18', '\a', '\v', '\x2', 
+		'\x2', '\x14', '\x17', '\x5', '\x4', '\x3', '\x2', '\x15', '\x17', '\x5', 
+		'\x6', '\x4', '\x2', '\x16', '\x14', '\x3', '\x2', '\x2', '\x2', '\x16', 
+		'\x15', '\x3', '\x2', '\x2', '\x2', '\x17', '\x1A', '\x3', '\x2', '\x2', 
+		'\x2', '\x18', '\x16', '\x3', '\x2', '\x2', '\x2', '\x18', '\x19', '\x3', 
+		'\x2', '\x2', '\x2', '\x19', '\x1C', '\x3', '\x2', '\x2', '\x2', '\x1A', 
+		'\x18', '\x3', '\x2', '\x2', '\x2', '\x1B', '\x1D', '\a', '\x2', '\x2', 
+		'\x3', '\x1C', '\x1B', '\x3', '\x2', '\x2', '\x2', '\x1C', '\x1D', '\x3', 
+		'\x2', '\x2', '\x2', '\x1D', '\x3', '\x3', '\x2', '\x2', '\x2', '\x1E', 
+		' ', '\a', '\b', '\x2', '\x2', '\x1F', '\x1E', '\x3', '\x2', '\x2', '\x2', 
+		' ', '!', '\x3', '\x2', '\x2', '\x2', '!', '\x1F', '\x3', '\x2', '\x2', 
+		'\x2', '!', '\"', '\x3', '\x2', '\x2', '\x2', '\"', '#', '\x3', '\x2', 
+		'\x2', '\x2', '#', '%', '\a', '\f', '\x2', '\x2', '$', '&', '\x5', '\n', 
+		'\x6', '\x2', '%', '$', '\x3', '\x2', '\x2', '\x2', '&', '\'', '\x3', 
+		'\x2', '\x2', '\x2', '\'', '%', '\x3', '\x2', '\x2', '\x2', '\'', '(', 
+		'\x3', '\x2', '\x2', '\x2', '(', ')', '\x3', '\x2', '\x2', '\x2', ')', 
+		'+', '\x5', '\b', '\x5', '\x2', '*', ',', '\a', '\v', '\x2', '\x2', '+', 
+		'*', '\x3', '\x2', '\x2', '\x2', '+', ',', '\x3', '\x2', '\x2', '\x2', 
+		',', '\x5', '\x3', '\x2', '\x2', '\x2', '-', '.', '\a', '\r', '\x2', '\x2', 
+		'.', '\x30', '\a', '\r', '\x2', '\x2', '/', '\x31', '\a', '\b', '\x2', 
+		'\x2', '\x30', '/', '\x3', '\x2', '\x2', '\x2', '\x31', '\x32', '\x3', 
+		'\x2', '\x2', '\x2', '\x32', '\x30', '\x3', '\x2', '\x2', '\x2', '\x32', 
+		'\x33', '\x3', '\x2', '\x2', '\x2', '\x33', '\x34', '\x3', '\x2', '\x2', 
+		'\x2', '\x34', '\x36', '\a', '\f', '\x2', '\x2', '\x35', '\x37', '\x5', 
+		'\n', '\x6', '\x2', '\x36', '\x35', '\x3', '\x2', '\x2', '\x2', '\x37', 
+		'\x38', '\x3', '\x2', '\x2', '\x2', '\x38', '\x36', '\x3', '\x2', '\x2', 
+		'\x2', '\x38', '\x39', '\x3', '\x2', '\x2', '\x2', '\x39', ':', '\x3', 
+		'\x2', '\x2', '\x2', ':', '<', '\x5', '\b', '\x5', '\x2', ';', '=', '\a', 
+		'\v', '\x2', '\x2', '<', ';', '\x3', '\x2', '\x2', '\x2', '<', '=', '\x3', 
+		'\x2', '\x2', '\x2', '=', '\a', '\x3', '\x2', '\x2', '\x2', '>', '?', 
+		'\a', '\x4', '\x2', '\x2', '?', '@', '\a', '\n', '\x2', '\x2', '@', '\x41', 
+		'\a', '\x6', '\x2', '\x2', '\x41', '\x42', '\a', '\t', '\x2', '\x2', '\x42', 
+		'\x43', '\a', '\x6', '\x2', '\x2', '\x43', '\x44', '\a', '\t', '\x2', 
+		'\x2', '\x44', '\x45', '\a', '\x5', '\x2', '\x2', '\x45', '\x46', '\a', 
+		'\t', '\x2', '\x2', '\x46', 'G', '\a', '\a', '\x2', '\x2', 'G', 'H', '\a', 
+		'\t', '\x2', '\x2', 'H', 'I', '\a', '\a', '\x2', '\x2', 'I', 'J', '\a', 
+		'\t', '\x2', '\x2', 'J', 'K', '\a', '\x4', '\x2', '\x2', 'K', '\t', '\x3', 
+		'\x2', '\x2', '\x2', 'L', 'M', '\t', '\x2', '\x2', '\x2', 'M', '\v', '\x3', 
+		'\x2', '\x2', '\x2', '\f', '\x10', '\x16', '\x18', '\x1C', '!', '\'', 
+		'+', '\x32', '\x38', '<',
 	};
 
 	public static readonly ATN _ATN =

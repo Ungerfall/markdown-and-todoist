@@ -41,6 +41,26 @@ public interface ITodoistGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProject([NotNull] TodoistGrammarParser.ProjectContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.task"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTask([NotNull] TodoistGrammarParser.TaskContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.task"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTask([NotNull] TodoistGrammarParser.TaskContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.subtask"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterSubtask([NotNull] TodoistGrammarParser.SubtaskContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.subtask"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitSubtask([NotNull] TodoistGrammarParser.SubtaskContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -50,4 +70,14 @@ public interface ITodoistGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitDate([NotNull] TodoistGrammarParser.DateContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.inline"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterInline([NotNull] TodoistGrammarParser.InlineContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.inline"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitInline([NotNull] TodoistGrammarParser.InlineContext context);
 }

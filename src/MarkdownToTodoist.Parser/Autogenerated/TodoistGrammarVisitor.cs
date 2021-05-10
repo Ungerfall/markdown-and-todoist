@@ -38,9 +38,27 @@ public interface ITodoistGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProject([NotNull] TodoistGrammarParser.ProjectContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.task"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTask([NotNull] TodoistGrammarParser.TaskContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.subtask"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSubtask([NotNull] TodoistGrammarParser.SubtaskContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitDate([NotNull] TodoistGrammarParser.DateContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.inline"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInline([NotNull] TodoistGrammarParser.InlineContext context);
 }

@@ -1,9 +1,8 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using MarkdownToTodoist.Core.Model;
+using MarkdownToTodoist.Parser;
 using System;
-using System.Globalization;
-using System.IO;
+using System.Text.Json;
 
 namespace MarkdownToTodoist.Cli
 {
@@ -11,48 +10,29 @@ namespace MarkdownToTodoist.Cli
     {
         static void Main(string[] args)
         {
-            String input = "%2020-01-22T21:03:33%";
+            string input = @"# ANLTR4 event %2021-05-12T18:00:00%
+1. Create presentation %2021-04-14T23:59:59%
+2. Create an abstract %2021-04-21T23:59:59%";
+
             ICharStream stream = CharStreams.fromString(input);
             ITokenSource lexer = new TodoistGrammarLexer(stream);
             ITokenStream tokens = new CommonTokenStream(lexer);
             var parser = new TodoistGrammarParser(tokens);
             parser.RemoveErrorListeners();
-            parser.AddErrorListener(new ErrorListener());
+            parser.AddErrorListener(new ConsoleErrorListener());
             parser.BuildParseTree = true;
             var visitor = new Visitor();
             IParseTree tree = parser.project();
             var project = visitor.Visit(tree);
 
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(project));
+            Console.WriteLine(JsonSerializer.Serialize(
+                project,
+                new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                }));
 
             Console.ReadLine();
-        }
-    }
-
-    public class ErrorListener : IAntlrErrorListener<IToken>
-    {
-        public void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine,
-            string msg, RecognitionException e)
-        {
-            output.WriteLine(msg);
-        }
-    }
-
-    public class Visitor : TodoistGrammarBaseVisitor<TodoistProject>
-    {
-        private TodoistProject project;
-
-        public override TodoistProject VisitProject(TodoistGrammarParser.ProjectContext context)
-        {
-            project = new TodoistProject();
-            return base.VisitProject(context);
-        }
-
-        public override TodoistProject VisitDate(TodoistGrammarParser.DateContext context)
-        {
-            var datetimeString = context.GetText();
-            project.Date = DateTime.ParseExact(context.GetText(), "yyyy-MM-ddThh:mm:ss", CultureInfo.InvariantCulture);
-            return project;
         }
     }
 }

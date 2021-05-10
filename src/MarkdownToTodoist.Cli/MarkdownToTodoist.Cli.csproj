@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MarkdownToTodoist.Core\MarkdownToTodoist.Core.csproj" />
+    <ProjectReference Include="..\MarkdownToTodoist.Domain\MarkdownToTodoist.Domain.csproj" />
     <ProjectReference Include="..\MarkdownToTodoist.Parser\MarkdownToTodoist.Parser.csproj" />
   </ItemGroup>
 

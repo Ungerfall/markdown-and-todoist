@@ -48,6 +48,30 @@ public partial class TodoistGrammarBaseListener : ITodoistGrammarListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProject([NotNull] TodoistGrammarParser.ProjectContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.task"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTask([NotNull] TodoistGrammarParser.TaskContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.task"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTask([NotNull] TodoistGrammarParser.TaskContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.subtask"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSubtask([NotNull] TodoistGrammarParser.SubtaskContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.subtask"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSubtask([NotNull] TodoistGrammarParser.SubtaskContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -59,6 +83,18 @@ public partial class TodoistGrammarBaseListener : ITodoistGrammarListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitDate([NotNull] TodoistGrammarParser.DateContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.inline"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInline([NotNull] TodoistGrammarParser.InlineContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.inline"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInline([NotNull] TodoistGrammarParser.InlineContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
