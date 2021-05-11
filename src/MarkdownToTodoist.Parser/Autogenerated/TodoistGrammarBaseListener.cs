@@ -72,6 +72,30 @@ public partial class TodoistGrammarBaseListener : ITodoistGrammarListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSubtask([NotNull] TodoistGrammarParser.SubtaskContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.checkbox"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterCheckbox([NotNull] TodoistGrammarParser.CheckboxContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.checkbox"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitCheckbox([NotNull] TodoistGrammarParser.CheckboxContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.description"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDescription([NotNull] TodoistGrammarParser.DescriptionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.description"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDescription([NotNull] TodoistGrammarParser.DescriptionContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

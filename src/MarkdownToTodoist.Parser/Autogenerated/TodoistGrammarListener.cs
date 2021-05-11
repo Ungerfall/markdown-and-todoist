@@ -61,6 +61,26 @@ public interface ITodoistGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitSubtask([NotNull] TodoistGrammarParser.SubtaskContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.checkbox"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCheckbox([NotNull] TodoistGrammarParser.CheckboxContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.checkbox"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCheckbox([NotNull] TodoistGrammarParser.CheckboxContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.description"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDescription([NotNull] TodoistGrammarParser.DescriptionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TodoistGrammarParser.description"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDescription([NotNull] TodoistGrammarParser.DescriptionContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

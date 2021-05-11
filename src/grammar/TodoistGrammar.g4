@@ -29,11 +29,13 @@ TEXT : [a-zA-Z0-9];
     parser rules 
 */
 
-project : SHARP date? description  NEWLINE (task | subtask)* EOF?;
+project : SHARP SPACE date? description (NEWLINE | EOF) task* EOF?;
 
-task : DIGIT+ PERIOD SPACE OPEN_SB (SPACE | X_LETTER) CLOSE_SB date? description NEWLINE?;
+task : DIGIT+ PERIOD SPACE checkbox SPACE date? description NEWLINE? subtask*;
 
-subtask : SPACE SPACE task;
+subtask : SPACE SPACE DIGIT+ PERIOD SPACE checkbox SPACE date? description NEWLINE?;
+
+checkbox : OPEN_SB (SPACE | X_LETTER) CLOSE_SB;
 
 description : inline+;
 
@@ -52,4 +54,5 @@ inline : TEXT
     | INT4
     | PERIOD
     | SPACE
+    | X_LETTER
     ;

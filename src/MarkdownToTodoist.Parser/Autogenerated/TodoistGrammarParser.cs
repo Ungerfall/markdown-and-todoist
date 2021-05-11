@@ -36,21 +36,24 @@ public partial class TodoistGrammarParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		SHARP=1, PERCENT=2, DATETIMESEPARATOR=3, HYPHEN=4, COLON=5, DIGIT=6, INT2=7, 
-		INT4=8, NEWLINE=9, PERIOD=10, SPACE=11, TEXT=12;
+		SHARP=1, PERCENT=2, DATETIMESEPARATOR=3, OPEN_SB=4, CLOSE_SB=5, X_LETTER=6, 
+		HYPHEN=7, COLON=8, DIGIT=9, INT2=10, INT4=11, NEWLINE=12, PERIOD=13, SPACE=14, 
+		TEXT=15;
 	public const int
-		RULE_project = 0, RULE_task = 1, RULE_subtask = 2, RULE_date = 3, RULE_inline = 4;
+		RULE_project = 0, RULE_task = 1, RULE_subtask = 2, RULE_checkbox = 3, 
+		RULE_description = 4, RULE_date = 5, RULE_inline = 6;
 	public static readonly string[] ruleNames = {
-		"project", "task", "subtask", "date", "inline"
+		"project", "task", "subtask", "checkbox", "description", "date", "inline"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'#'", "'%'", "'T'", "'-'", "':'", null, null, null, null, "'.'", 
-		"' '"
+		null, "'#'", "'%'", "'T'", "'['", "']'", "'x'", "'-'", "':'", null, null, 
+		null, null, "'.'", "' '"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "SHARP", "PERCENT", "DATETIMESEPARATOR", "HYPHEN", "COLON", "DIGIT", 
-		"INT2", "INT4", "NEWLINE", "PERIOD", "SPACE", "TEXT"
+		null, "SHARP", "PERCENT", "DATETIMESEPARATOR", "OPEN_SB", "CLOSE_SB", 
+		"X_LETTER", "HYPHEN", "COLON", "DIGIT", "INT2", "INT4", "NEWLINE", "PERIOD", 
+		"SPACE", "TEXT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -86,15 +89,17 @@ public partial class TodoistGrammarParser : Parser {
 
 	public partial class ProjectContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SHARP() { return GetToken(TodoistGrammarParser.SHARP, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
-			return GetRuleContext<DateContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE() { return GetToken(TodoistGrammarParser.SPACE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public DescriptionContext description() {
+			return GetRuleContext<DescriptionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(TodoistGrammarParser.NEWLINE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
-			return GetRuleContexts<InlineContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] Eof() { return GetTokens(TodoistGrammarParser.Eof); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Eof(int i) {
+			return GetToken(TodoistGrammarParser.Eof, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
-			return GetRuleContext<InlineContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
+			return GetRuleContext<DateContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public TaskContext[] task() {
 			return GetRuleContexts<TaskContext>();
@@ -102,13 +107,6 @@ public partial class TodoistGrammarParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public TaskContext task(int i) {
 			return GetRuleContext<TaskContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public SubtaskContext[] subtask() {
-			return GetRuleContexts<SubtaskContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public SubtaskContext subtask(int i) {
-			return GetRuleContext<SubtaskContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Eof() { return GetToken(TodoistGrammarParser.Eof, 0); }
 		public ProjectContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -138,69 +136,53 @@ public partial class TodoistGrammarParser : Parser {
 		EnterRule(_localctx, 0, RULE_project);
 		int _la;
 		try {
-			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 10;
+			State = 14;
 			Match(SHARP);
-			State = 12;
-			ErrorHandler.Sync(this);
-			_alt = 1;
-			do {
-				switch (_alt) {
-				case 1:
-					{
-					{
-					State = 11;
-					inline();
-					}
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
-				}
-				State = 14;
-				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,0,Context);
-			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
-			State = 16;
-			date();
+			State = 15;
+			Match(SPACE);
 			State = 17;
-			Match(NEWLINE);
-			State = 22;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,0,Context) ) {
+			case 1:
+				{
+				State = 16;
+				date();
+				}
+				break;
+			}
+			State = 19;
+			description();
+			State = 20;
+			_la = TokenStream.LA(1);
+			if ( !(_la==Eof || _la==NEWLINE) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
+			State = 24;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==DIGIT || _la==SPACE) {
+			while (_la==DIGIT) {
 				{
-				State = 20;
-				ErrorHandler.Sync(this);
-				switch (TokenStream.LA(1)) {
-				case DIGIT:
-					{
-					State = 18;
-					task();
-					}
-					break;
-				case SPACE:
-					{
-					State = 19;
-					subtask();
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
+				{
+				State = 21;
+				task();
 				}
 				}
-				State = 24;
+				State = 26;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 26;
+			State = 28;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 			case 1:
 				{
-				State = 25;
+				State = 27;
 				Match(Eof);
 				}
 				break;
@@ -220,20 +202,30 @@ public partial class TodoistGrammarParser : Parser {
 
 	public partial class TaskContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(TodoistGrammarParser.PERIOD, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
-			return GetRuleContext<DateContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] SPACE() { return GetTokens(TodoistGrammarParser.SPACE); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE(int i) {
+			return GetToken(TodoistGrammarParser.SPACE, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public CheckboxContext checkbox() {
+			return GetRuleContext<CheckboxContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DescriptionContext description() {
+			return GetRuleContext<DescriptionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] DIGIT() { return GetTokens(TodoistGrammarParser.DIGIT); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIGIT(int i) {
 			return GetToken(TodoistGrammarParser.DIGIT, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
-			return GetRuleContexts<InlineContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
-			return GetRuleContext<InlineContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
+			return GetRuleContext<DateContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(TodoistGrammarParser.NEWLINE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public SubtaskContext[] subtask() {
+			return GetRuleContexts<SubtaskContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public SubtaskContext subtask(int i) {
+			return GetRuleContext<SubtaskContext>(i);
+		}
 		public TaskContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -263,57 +255,66 @@ public partial class TodoistGrammarParser : Parser {
 		EnterRule(_localctx, 2, RULE_task);
 		int _la;
 		try {
-			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 29;
+			State = 31;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 28;
+				State = 30;
 				Match(DIGIT);
 				}
 				}
-				State = 31;
+				State = 33;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==DIGIT );
-			State = 33;
-			Match(PERIOD);
 			State = 35;
+			Match(PERIOD);
+			State = 36;
+			Match(SPACE);
+			State = 37;
+			checkbox();
+			State = 38;
+			Match(SPACE);
+			State = 40;
 			ErrorHandler.Sync(this);
-			_alt = 1;
-			do {
-				switch (_alt) {
-				case 1:
-					{
-					{
-					State = 34;
-					inline();
-					}
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,4,Context) ) {
+			case 1:
+				{
+				State = 39;
+				date();
 				}
-				State = 37;
-				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
-			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
-			State = 39;
-			date();
-			State = 41;
+				break;
+			}
+			State = 42;
+			description();
+			State = 44;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NEWLINE) {
 				{
-				State = 40;
+				State = 43;
 				Match(NEWLINE);
 				}
 			}
 
+			State = 49;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==SPACE) {
+				{
+				{
+				State = 46;
+				subtask();
+				}
+				}
+				State = 51;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -333,18 +334,18 @@ public partial class TodoistGrammarParser : Parser {
 			return GetToken(TodoistGrammarParser.SPACE, i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(TodoistGrammarParser.PERIOD, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
-			return GetRuleContext<DateContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public CheckboxContext checkbox() {
+			return GetRuleContext<CheckboxContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DescriptionContext description() {
+			return GetRuleContext<DescriptionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] DIGIT() { return GetTokens(TodoistGrammarParser.DIGIT); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIGIT(int i) {
 			return GetToken(TodoistGrammarParser.DIGIT, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
-			return GetRuleContexts<InlineContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
-			return GetRuleContext<InlineContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public DateContext date() {
+			return GetRuleContext<DateContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(TodoistGrammarParser.NEWLINE, 0); }
 		public SubtaskContext(ParserRuleContext parent, int invokingState)
@@ -376,30 +377,170 @@ public partial class TodoistGrammarParser : Parser {
 		EnterRule(_localctx, 4, RULE_subtask);
 		int _la;
 		try {
-			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 43;
+			State = 52;
 			Match(SPACE);
-			State = 44;
+			State = 53;
 			Match(SPACE);
-			State = 46;
+			State = 55;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 45;
+				State = 54;
 				Match(DIGIT);
 				}
 				}
-				State = 48;
+				State = 57;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==DIGIT );
-			State = 50;
+			State = 59;
 			Match(PERIOD);
-			State = 52;
+			State = 60;
+			Match(SPACE);
+			State = 61;
+			checkbox();
+			State = 62;
+			Match(SPACE);
+			State = 64;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
+			case 1:
+				{
+				State = 63;
+				date();
+				}
+				break;
+			}
+			State = 66;
+			description();
+			State = 68;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==NEWLINE) {
+				{
+				State = 67;
+				Match(NEWLINE);
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class CheckboxContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode OPEN_SB() { return GetToken(TodoistGrammarParser.OPEN_SB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLOSE_SB() { return GetToken(TodoistGrammarParser.CLOSE_SB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE() { return GetToken(TodoistGrammarParser.SPACE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode X_LETTER() { return GetToken(TodoistGrammarParser.X_LETTER, 0); }
+		public CheckboxContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_checkbox; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.EnterCheckbox(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.ExitCheckbox(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ITodoistGrammarVisitor<TResult> typedVisitor = visitor as ITodoistGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCheckbox(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public CheckboxContext checkbox() {
+		CheckboxContext _localctx = new CheckboxContext(Context, State);
+		EnterRule(_localctx, 6, RULE_checkbox);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 70;
+			Match(OPEN_SB);
+			State = 71;
+			_la = TokenStream.LA(1);
+			if ( !(_la==X_LETTER || _la==SPACE) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
+			State = 72;
+			Match(CLOSE_SB);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DescriptionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext[] inline() {
+			return GetRuleContexts<InlineContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InlineContext inline(int i) {
+			return GetRuleContext<InlineContext>(i);
+		}
+		public DescriptionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_description; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.EnterDescription(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ITodoistGrammarListener typedListener = listener as ITodoistGrammarListener;
+			if (typedListener != null) typedListener.ExitDescription(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ITodoistGrammarVisitor<TResult> typedVisitor = visitor as ITodoistGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDescription(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DescriptionContext description() {
+		DescriptionContext _localctx = new DescriptionContext(Context, State);
+		EnterRule(_localctx, 8, RULE_description);
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 75;
 			ErrorHandler.Sync(this);
 			_alt = 1;
 			do {
@@ -407,7 +548,7 @@ public partial class TodoistGrammarParser : Parser {
 				case 1:
 					{
 					{
-					State = 51;
+					State = 74;
 					inline();
 					}
 					}
@@ -415,22 +556,10 @@ public partial class TodoistGrammarParser : Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				State = 54;
+				State = 77;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,10,Context);
 			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
-			State = 56;
-			date();
-			State = 58;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==NEWLINE) {
-				{
-				State = 57;
-				Match(NEWLINE);
-				}
-			}
-
 			}
 		}
 		catch (RecognitionException re) {
@@ -489,35 +618,35 @@ public partial class TodoistGrammarParser : Parser {
 	[RuleVersion(0)]
 	public DateContext date() {
 		DateContext _localctx = new DateContext(Context, State);
-		EnterRule(_localctx, 6, RULE_date);
+		EnterRule(_localctx, 10, RULE_date);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 60;
+			State = 79;
 			Match(PERCENT);
-			State = 61;
+			State = 80;
 			Match(INT4);
-			State = 62;
+			State = 81;
 			Match(HYPHEN);
-			State = 63;
+			State = 82;
 			Match(INT2);
-			State = 64;
+			State = 83;
 			Match(HYPHEN);
-			State = 65;
+			State = 84;
 			Match(INT2);
-			State = 66;
+			State = 85;
 			Match(DATETIMESEPARATOR);
-			State = 67;
+			State = 86;
 			Match(INT2);
-			State = 68;
+			State = 87;
 			Match(COLON);
-			State = 69;
+			State = 88;
 			Match(INT2);
-			State = 70;
+			State = 89;
 			Match(COLON);
-			State = 71;
+			State = 90;
 			Match(INT2);
-			State = 72;
+			State = 91;
 			Match(PERCENT);
 			}
 		}
@@ -544,6 +673,7 @@ public partial class TodoistGrammarParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INT4() { return GetToken(TodoistGrammarParser.INT4, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(TodoistGrammarParser.PERIOD, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SPACE() { return GetToken(TodoistGrammarParser.SPACE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode X_LETTER() { return GetToken(TodoistGrammarParser.X_LETTER, 0); }
 		public InlineContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -570,14 +700,14 @@ public partial class TodoistGrammarParser : Parser {
 	[RuleVersion(0)]
 	public InlineContext inline() {
 		InlineContext _localctx = new InlineContext(Context, State);
-		EnterRule(_localctx, 8, RULE_inline);
+		EnterRule(_localctx, 12, RULE_inline);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 74;
+			State = 93;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SHARP) | (1L << PERCENT) | (1L << DATETIMESEPARATOR) | (1L << HYPHEN) | (1L << COLON) | (1L << DIGIT) | (1L << INT2) | (1L << INT4) | (1L << PERIOD) | (1L << SPACE) | (1L << TEXT))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SHARP) | (1L << PERCENT) | (1L << DATETIMESEPARATOR) | (1L << X_LETTER) | (1L << HYPHEN) | (1L << COLON) | (1L << DIGIT) | (1L << INT2) | (1L << INT4) | (1L << PERIOD) | (1L << SPACE) | (1L << TEXT))) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -599,71 +729,84 @@ public partial class TodoistGrammarParser : Parser {
 
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\xE', 'O', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\x5964', '\x3', '\x11', '\x62', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
 		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', 
-		'\x6', '\t', '\x6', '\x3', '\x2', '\x3', '\x2', '\x6', '\x2', '\xF', '\n', 
-		'\x2', '\r', '\x2', '\xE', '\x2', '\x10', '\x3', '\x2', '\x3', '\x2', 
-		'\x3', '\x2', '\x3', '\x2', '\a', '\x2', '\x17', '\n', '\x2', '\f', '\x2', 
-		'\xE', '\x2', '\x1A', '\v', '\x2', '\x3', '\x2', '\x5', '\x2', '\x1D', 
-		'\n', '\x2', '\x3', '\x3', '\x6', '\x3', ' ', '\n', '\x3', '\r', '\x3', 
-		'\xE', '\x3', '!', '\x3', '\x3', '\x3', '\x3', '\x6', '\x3', '&', '\n', 
-		'\x3', '\r', '\x3', '\xE', '\x3', '\'', '\x3', '\x3', '\x3', '\x3', '\x5', 
-		'\x3', ',', '\n', '\x3', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\x6', 
-		'\x4', '\x31', '\n', '\x4', '\r', '\x4', '\xE', '\x4', '\x32', '\x3', 
-		'\x4', '\x3', '\x4', '\x6', '\x4', '\x37', '\n', '\x4', '\r', '\x4', '\xE', 
-		'\x4', '\x38', '\x3', '\x4', '\x3', '\x4', '\x5', '\x4', '=', '\n', '\x4', 
-		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', 
-		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', 
-		'\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x6', 
-		'\x3', '\x6', '\x3', '\x6', '\x2', '\x2', '\a', '\x2', '\x4', '\x6', '\b', 
-		'\n', '\x2', '\x3', '\x4', '\x2', '\x3', '\n', '\f', '\xE', '\x2', 'S', 
-		'\x2', '\f', '\x3', '\x2', '\x2', '\x2', '\x4', '\x1F', '\x3', '\x2', 
-		'\x2', '\x2', '\x6', '-', '\x3', '\x2', '\x2', '\x2', '\b', '>', '\x3', 
-		'\x2', '\x2', '\x2', '\n', 'L', '\x3', '\x2', '\x2', '\x2', '\f', '\xE', 
-		'\a', '\x3', '\x2', '\x2', '\r', '\xF', '\x5', '\n', '\x6', '\x2', '\xE', 
-		'\r', '\x3', '\x2', '\x2', '\x2', '\xF', '\x10', '\x3', '\x2', '\x2', 
-		'\x2', '\x10', '\xE', '\x3', '\x2', '\x2', '\x2', '\x10', '\x11', '\x3', 
-		'\x2', '\x2', '\x2', '\x11', '\x12', '\x3', '\x2', '\x2', '\x2', '\x12', 
-		'\x13', '\x5', '\b', '\x5', '\x2', '\x13', '\x18', '\a', '\v', '\x2', 
-		'\x2', '\x14', '\x17', '\x5', '\x4', '\x3', '\x2', '\x15', '\x17', '\x5', 
-		'\x6', '\x4', '\x2', '\x16', '\x14', '\x3', '\x2', '\x2', '\x2', '\x16', 
-		'\x15', '\x3', '\x2', '\x2', '\x2', '\x17', '\x1A', '\x3', '\x2', '\x2', 
-		'\x2', '\x18', '\x16', '\x3', '\x2', '\x2', '\x2', '\x18', '\x19', '\x3', 
-		'\x2', '\x2', '\x2', '\x19', '\x1C', '\x3', '\x2', '\x2', '\x2', '\x1A', 
-		'\x18', '\x3', '\x2', '\x2', '\x2', '\x1B', '\x1D', '\a', '\x2', '\x2', 
-		'\x3', '\x1C', '\x1B', '\x3', '\x2', '\x2', '\x2', '\x1C', '\x1D', '\x3', 
-		'\x2', '\x2', '\x2', '\x1D', '\x3', '\x3', '\x2', '\x2', '\x2', '\x1E', 
-		' ', '\a', '\b', '\x2', '\x2', '\x1F', '\x1E', '\x3', '\x2', '\x2', '\x2', 
-		' ', '!', '\x3', '\x2', '\x2', '\x2', '!', '\x1F', '\x3', '\x2', '\x2', 
-		'\x2', '!', '\"', '\x3', '\x2', '\x2', '\x2', '\"', '#', '\x3', '\x2', 
-		'\x2', '\x2', '#', '%', '\a', '\f', '\x2', '\x2', '$', '&', '\x5', '\n', 
-		'\x6', '\x2', '%', '$', '\x3', '\x2', '\x2', '\x2', '&', '\'', '\x3', 
-		'\x2', '\x2', '\x2', '\'', '%', '\x3', '\x2', '\x2', '\x2', '\'', '(', 
-		'\x3', '\x2', '\x2', '\x2', '(', ')', '\x3', '\x2', '\x2', '\x2', ')', 
-		'+', '\x5', '\b', '\x5', '\x2', '*', ',', '\a', '\v', '\x2', '\x2', '+', 
-		'*', '\x3', '\x2', '\x2', '\x2', '+', ',', '\x3', '\x2', '\x2', '\x2', 
-		',', '\x5', '\x3', '\x2', '\x2', '\x2', '-', '.', '\a', '\r', '\x2', '\x2', 
-		'.', '\x30', '\a', '\r', '\x2', '\x2', '/', '\x31', '\a', '\b', '\x2', 
-		'\x2', '\x30', '/', '\x3', '\x2', '\x2', '\x2', '\x31', '\x32', '\x3', 
-		'\x2', '\x2', '\x2', '\x32', '\x30', '\x3', '\x2', '\x2', '\x2', '\x32', 
-		'\x33', '\x3', '\x2', '\x2', '\x2', '\x33', '\x34', '\x3', '\x2', '\x2', 
-		'\x2', '\x34', '\x36', '\a', '\f', '\x2', '\x2', '\x35', '\x37', '\x5', 
-		'\n', '\x6', '\x2', '\x36', '\x35', '\x3', '\x2', '\x2', '\x2', '\x37', 
-		'\x38', '\x3', '\x2', '\x2', '\x2', '\x38', '\x36', '\x3', '\x2', '\x2', 
-		'\x2', '\x38', '\x39', '\x3', '\x2', '\x2', '\x2', '\x39', ':', '\x3', 
-		'\x2', '\x2', '\x2', ':', '<', '\x5', '\b', '\x5', '\x2', ';', '=', '\a', 
-		'\v', '\x2', '\x2', '<', ';', '\x3', '\x2', '\x2', '\x2', '<', '=', '\x3', 
-		'\x2', '\x2', '\x2', '=', '\a', '\x3', '\x2', '\x2', '\x2', '>', '?', 
-		'\a', '\x4', '\x2', '\x2', '?', '@', '\a', '\n', '\x2', '\x2', '@', '\x41', 
-		'\a', '\x6', '\x2', '\x2', '\x41', '\x42', '\a', '\t', '\x2', '\x2', '\x42', 
-		'\x43', '\a', '\x6', '\x2', '\x2', '\x43', '\x44', '\a', '\t', '\x2', 
-		'\x2', '\x44', '\x45', '\a', '\x5', '\x2', '\x2', '\x45', '\x46', '\a', 
-		'\t', '\x2', '\x2', '\x46', 'G', '\a', '\a', '\x2', '\x2', 'G', 'H', '\a', 
-		'\t', '\x2', '\x2', 'H', 'I', '\a', '\a', '\x2', '\x2', 'I', 'J', '\a', 
-		'\t', '\x2', '\x2', 'J', 'K', '\a', '\x4', '\x2', '\x2', 'K', '\t', '\x3', 
-		'\x2', '\x2', '\x2', 'L', 'M', '\t', '\x2', '\x2', '\x2', 'M', '\v', '\x3', 
-		'\x2', '\x2', '\x2', '\f', '\x10', '\x16', '\x18', '\x1C', '!', '\'', 
-		'+', '\x32', '\x38', '<',
+		'\x6', '\t', '\x6', '\x4', '\a', '\t', '\a', '\x4', '\b', '\t', '\b', 
+		'\x3', '\x2', '\x3', '\x2', '\x3', '\x2', '\x5', '\x2', '\x14', '\n', 
+		'\x2', '\x3', '\x2', '\x3', '\x2', '\x3', '\x2', '\a', '\x2', '\x19', 
+		'\n', '\x2', '\f', '\x2', '\xE', '\x2', '\x1C', '\v', '\x2', '\x3', '\x2', 
+		'\x5', '\x2', '\x1F', '\n', '\x2', '\x3', '\x3', '\x6', '\x3', '\"', '\n', 
+		'\x3', '\r', '\x3', '\xE', '\x3', '#', '\x3', '\x3', '\x3', '\x3', '\x3', 
+		'\x3', '\x3', '\x3', '\x3', '\x3', '\x5', '\x3', '+', '\n', '\x3', '\x3', 
+		'\x3', '\x3', '\x3', '\x5', '\x3', '/', '\n', '\x3', '\x3', '\x3', '\a', 
+		'\x3', '\x32', '\n', '\x3', '\f', '\x3', '\xE', '\x3', '\x35', '\v', '\x3', 
+		'\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\x6', '\x4', ':', '\n', '\x4', 
+		'\r', '\x4', '\xE', '\x4', ';', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', 
+		'\x3', '\x4', '\x3', '\x4', '\x5', '\x4', '\x43', '\n', '\x4', '\x3', 
+		'\x4', '\x3', '\x4', '\x5', '\x4', 'G', '\n', '\x4', '\x3', '\x5', '\x3', 
+		'\x5', '\x3', '\x5', '\x3', '\x5', '\x3', '\x6', '\x6', '\x6', 'N', '\n', 
+		'\x6', '\r', '\x6', '\xE', '\x6', 'O', '\x3', '\a', '\x3', '\a', '\x3', 
+		'\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', 
+		'\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', 
+		'\a', '\x3', '\b', '\x3', '\b', '\x3', '\b', '\x2', '\x2', '\t', '\x2', 
+		'\x4', '\x6', '\b', '\n', '\f', '\xE', '\x2', '\x5', '\x3', '\x3', '\xE', 
+		'\xE', '\x4', '\x2', '\b', '\b', '\x10', '\x10', '\x5', '\x2', '\x3', 
+		'\x5', '\b', '\r', '\xF', '\x11', '\x2', '\x65', '\x2', '\x10', '\x3', 
+		'\x2', '\x2', '\x2', '\x4', '!', '\x3', '\x2', '\x2', '\x2', '\x6', '\x36', 
+		'\x3', '\x2', '\x2', '\x2', '\b', 'H', '\x3', '\x2', '\x2', '\x2', '\n', 
+		'M', '\x3', '\x2', '\x2', '\x2', '\f', 'Q', '\x3', '\x2', '\x2', '\x2', 
+		'\xE', '_', '\x3', '\x2', '\x2', '\x2', '\x10', '\x11', '\a', '\x3', '\x2', 
+		'\x2', '\x11', '\x13', '\a', '\x10', '\x2', '\x2', '\x12', '\x14', '\x5', 
+		'\f', '\a', '\x2', '\x13', '\x12', '\x3', '\x2', '\x2', '\x2', '\x13', 
+		'\x14', '\x3', '\x2', '\x2', '\x2', '\x14', '\x15', '\x3', '\x2', '\x2', 
+		'\x2', '\x15', '\x16', '\x5', '\n', '\x6', '\x2', '\x16', '\x1A', '\t', 
+		'\x2', '\x2', '\x2', '\x17', '\x19', '\x5', '\x4', '\x3', '\x2', '\x18', 
+		'\x17', '\x3', '\x2', '\x2', '\x2', '\x19', '\x1C', '\x3', '\x2', '\x2', 
+		'\x2', '\x1A', '\x18', '\x3', '\x2', '\x2', '\x2', '\x1A', '\x1B', '\x3', 
+		'\x2', '\x2', '\x2', '\x1B', '\x1E', '\x3', '\x2', '\x2', '\x2', '\x1C', 
+		'\x1A', '\x3', '\x2', '\x2', '\x2', '\x1D', '\x1F', '\a', '\x2', '\x2', 
+		'\x3', '\x1E', '\x1D', '\x3', '\x2', '\x2', '\x2', '\x1E', '\x1F', '\x3', 
+		'\x2', '\x2', '\x2', '\x1F', '\x3', '\x3', '\x2', '\x2', '\x2', ' ', '\"', 
+		'\a', '\v', '\x2', '\x2', '!', ' ', '\x3', '\x2', '\x2', '\x2', '\"', 
+		'#', '\x3', '\x2', '\x2', '\x2', '#', '!', '\x3', '\x2', '\x2', '\x2', 
+		'#', '$', '\x3', '\x2', '\x2', '\x2', '$', '%', '\x3', '\x2', '\x2', '\x2', 
+		'%', '&', '\a', '\xF', '\x2', '\x2', '&', '\'', '\a', '\x10', '\x2', '\x2', 
+		'\'', '(', '\x5', '\b', '\x5', '\x2', '(', '*', '\a', '\x10', '\x2', '\x2', 
+		')', '+', '\x5', '\f', '\a', '\x2', '*', ')', '\x3', '\x2', '\x2', '\x2', 
+		'*', '+', '\x3', '\x2', '\x2', '\x2', '+', ',', '\x3', '\x2', '\x2', '\x2', 
+		',', '.', '\x5', '\n', '\x6', '\x2', '-', '/', '\a', '\xE', '\x2', '\x2', 
+		'.', '-', '\x3', '\x2', '\x2', '\x2', '.', '/', '\x3', '\x2', '\x2', '\x2', 
+		'/', '\x33', '\x3', '\x2', '\x2', '\x2', '\x30', '\x32', '\x5', '\x6', 
+		'\x4', '\x2', '\x31', '\x30', '\x3', '\x2', '\x2', '\x2', '\x32', '\x35', 
+		'\x3', '\x2', '\x2', '\x2', '\x33', '\x31', '\x3', '\x2', '\x2', '\x2', 
+		'\x33', '\x34', '\x3', '\x2', '\x2', '\x2', '\x34', '\x5', '\x3', '\x2', 
+		'\x2', '\x2', '\x35', '\x33', '\x3', '\x2', '\x2', '\x2', '\x36', '\x37', 
+		'\a', '\x10', '\x2', '\x2', '\x37', '\x39', '\a', '\x10', '\x2', '\x2', 
+		'\x38', ':', '\a', '\v', '\x2', '\x2', '\x39', '\x38', '\x3', '\x2', '\x2', 
+		'\x2', ':', ';', '\x3', '\x2', '\x2', '\x2', ';', '\x39', '\x3', '\x2', 
+		'\x2', '\x2', ';', '<', '\x3', '\x2', '\x2', '\x2', '<', '=', '\x3', '\x2', 
+		'\x2', '\x2', '=', '>', '\a', '\xF', '\x2', '\x2', '>', '?', '\a', '\x10', 
+		'\x2', '\x2', '?', '@', '\x5', '\b', '\x5', '\x2', '@', '\x42', '\a', 
+		'\x10', '\x2', '\x2', '\x41', '\x43', '\x5', '\f', '\a', '\x2', '\x42', 
+		'\x41', '\x3', '\x2', '\x2', '\x2', '\x42', '\x43', '\x3', '\x2', '\x2', 
+		'\x2', '\x43', '\x44', '\x3', '\x2', '\x2', '\x2', '\x44', '\x46', '\x5', 
+		'\n', '\x6', '\x2', '\x45', 'G', '\a', '\xE', '\x2', '\x2', '\x46', '\x45', 
+		'\x3', '\x2', '\x2', '\x2', '\x46', 'G', '\x3', '\x2', '\x2', '\x2', 'G', 
+		'\a', '\x3', '\x2', '\x2', '\x2', 'H', 'I', '\a', '\x6', '\x2', '\x2', 
+		'I', 'J', '\t', '\x3', '\x2', '\x2', 'J', 'K', '\a', '\a', '\x2', '\x2', 
+		'K', '\t', '\x3', '\x2', '\x2', '\x2', 'L', 'N', '\x5', '\xE', '\b', '\x2', 
+		'M', 'L', '\x3', '\x2', '\x2', '\x2', 'N', 'O', '\x3', '\x2', '\x2', '\x2', 
+		'O', 'M', '\x3', '\x2', '\x2', '\x2', 'O', 'P', '\x3', '\x2', '\x2', '\x2', 
+		'P', '\v', '\x3', '\x2', '\x2', '\x2', 'Q', 'R', '\a', '\x4', '\x2', '\x2', 
+		'R', 'S', '\a', '\r', '\x2', '\x2', 'S', 'T', '\a', '\t', '\x2', '\x2', 
+		'T', 'U', '\a', '\f', '\x2', '\x2', 'U', 'V', '\a', '\t', '\x2', '\x2', 
+		'V', 'W', '\a', '\f', '\x2', '\x2', 'W', 'X', '\a', '\x5', '\x2', '\x2', 
+		'X', 'Y', '\a', '\f', '\x2', '\x2', 'Y', 'Z', '\a', '\n', '\x2', '\x2', 
+		'Z', '[', '\a', '\f', '\x2', '\x2', '[', '\\', '\a', '\n', '\x2', '\x2', 
+		'\\', ']', '\a', '\f', '\x2', '\x2', ']', '^', '\a', '\x4', '\x2', '\x2', 
+		'^', '\r', '\x3', '\x2', '\x2', '\x2', '_', '`', '\t', '\x4', '\x2', '\x2', 
+		'`', '\xF', '\x3', '\x2', '\x2', '\x2', '\r', '\x13', '\x1A', '\x1E', 
+		'#', '*', '.', '\x33', ';', '\x42', '\x46', 'O',
 	};
 
 	public static readonly ATN _ATN =

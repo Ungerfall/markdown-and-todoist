@@ -50,6 +50,18 @@ public interface ITodoistGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitSubtask([NotNull] TodoistGrammarParser.SubtaskContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.checkbox"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCheckbox([NotNull] TodoistGrammarParser.CheckboxContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.description"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDescription([NotNull] TodoistGrammarParser.DescriptionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="TodoistGrammarParser.date"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
