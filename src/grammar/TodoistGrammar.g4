@@ -11,6 +11,9 @@ options
 SHARP : '#';
 PERCENT : '%';
 DATETIMESEPARATOR : 'T';
+OPEN_SB : '[';
+CLOSE_SB : ']';
+X_LETTER : 'x';
 HYPHEN : '-';
 COLON : ':';
 DIGIT : [0-9];
@@ -26,11 +29,13 @@ TEXT : [a-zA-Z0-9];
     parser rules 
 */
 
-project : SHARP inline+ date NEWLINE (task | subtask)* EOF?;
+project : SHARP date? description  NEWLINE (task | subtask)* EOF?;
 
-task : DIGIT+ PERIOD inline+ date NEWLINE?;
+task : DIGIT+ PERIOD SPACE OPEN_SB (SPACE | X_LETTER) CLOSE_SB date? description NEWLINE?;
 
-subtask : SPACE SPACE DIGIT+ PERIOD inline+ date NEWLINE?;
+subtask : SPACE SPACE task;
+
+description : inline+;
 
 date
     : PERCENT INT4 HYPHEN INT2 HYPHEN INT2 DATETIMESEPARATOR INT2 COLON INT2 COLON INT2 PERCENT

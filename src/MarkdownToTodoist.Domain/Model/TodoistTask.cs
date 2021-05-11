@@ -14,7 +14,9 @@ namespace MarkdownToTodoist.Domain.Model
 
         public string Description { get; set; }
 
-        public DateTime DueTo { get; set; }
+        public DateTime? DueTo { get; set; }
+
+        public bool IsCompleted { get; set; }
 
         // premium feature
         public DateTime? Reminder { get; set; }
