@@ -32,6 +32,66 @@ namespace MarkdownToTodoist.Parser
                 var subTask = GetSubTask(project, subtaskContext.Start.Line.ToString(), taskContext.Start.Line.ToString());
                 subTask.DueTo = date;
             }
+            else
+            {
+                throw new Exception("misplaced date");
+            }
+
+            return project;
+        }
+
+        public override TodoistProject VisitDescription(TodoistGrammarParser.DescriptionContext context)
+        {
+            var description = context.GetText().Trim();
+            var project = base.VisitDescription(context);
+
+            if (context.Parent.RuleIndex == TodoistGrammarParser.RULE_project)
+            {
+                project.Name = description;
+            }
+            else if (context.Parent.RuleIndex == TodoistGrammarParser.RULE_task)
+            {
+                var taskContext = (TodoistGrammarParser.TaskContext)context.Parent;
+                var task = GetTask(project, taskContext.Start.Line.ToString());
+                task.Description = description;
+            }
+            else if (context.Parent.RuleIndex == TodoistGrammarParser.RULE_subtask)
+            {
+                var subtaskContext = (TodoistGrammarParser.SubtaskContext)context.Parent;
+                var taskContext = (TodoistGrammarParser.TaskContext)context.Parent.Parent;
+                var subTask = GetSubTask(project, subtaskContext.Start.Line.ToString(), taskContext.Start.Line.ToString());
+                subTask.Description = description;
+            }
+            else
+            {
+                throw new Exception("misplaced description");
+            }
+
+            return project;
+        }
+
+        public override TodoistProject VisitCheckbox(TodoistGrammarParser.CheckboxContext context)
+        {
+            var isCompleted = context.GetText()[1] == 'x';
+            var project = base.VisitCheckbox(context);
+
+            if (context.Parent.RuleIndex == TodoistGrammarParser.RULE_task)
+            {
+                var taskContext = (TodoistGrammarParser.TaskContext)context.Parent;
+                var task = GetTask(project, taskContext.Start.Line.ToString());
+                task.IsCompleted = isCompleted;
+            }
+            else if (context.Parent.RuleIndex == TodoistGrammarParser.RULE_subtask)
+            {
+                var subtaskContext = (TodoistGrammarParser.SubtaskContext)context.Parent;
+                var taskContext = (TodoistGrammarParser.TaskContext)context.Parent.Parent;
+                var subTask = GetSubTask(project, subtaskContext.Start.Line.ToString(), taskContext.Start.Line.ToString());
+                subTask.IsCompleted = isCompleted;
+            }
+            else
+            {
+                throw new Exception("misplaced checkbox");
+            }
 
             return project;
         }
