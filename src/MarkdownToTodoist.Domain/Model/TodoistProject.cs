@@ -12,7 +12,13 @@ namespace MarkdownToTodoist.Domain.Model
 
         public TodoistTask this[string index]
         {
-            get { return Tasks.SelectMany(x => x.SubTasks).FirstOrDefault(x => x.ParserId == index); }
+            get
+            {
+                return Tasks
+                    .SelectMany(x => x.SubTasks)
+                    .Union(Tasks)
+                    .FirstOrDefault(x => x.ParserId == index);
+            }
         }
     }
 }
