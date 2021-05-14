@@ -1,20 +1,20 @@
 @startuml
 
 package "input" {
-  file markdown [
-    markdown
+  file DSL [
+    DSL
 
     <&text>
   ]
 }
 
 package "parser" {
-  [Tokenizer]
-  [Parser]
+  [ANTLR runtime]
+  [Visitor]
 }
 
 package "model" {
-  [TodoistTask]
+  [TodoistProject]
 }
 
 package "request-builder" {
@@ -26,10 +26,10 @@ cloud {
   [todoist-rest-api]
 }
 
-markdown -> [Tokenizer]
-[Tokenizer] --> [Parser]
-[Parser] -> [TodoistTask]
-[TodoistTask] --> [model-handler]
+DSL -> [ANTLR runtime]
+[ANTLR runtime] --> [Visitor]
+[Visitor] -> [TodoistProject]
+[TodoistProject] --> [model-handler]
 [model-handler] -> [restsharp]
 http -> [todoist-rest-api]
 
